@@ -4,14 +4,10 @@ from twitchio.ext import commands
 import ssl
 import asyncio
 import aiohttp
-
-# Настройка SSL для Windows
 import ssl
+# Настройка SSL для Windows
 
-ssl._create_default_https_context = ssl._create_unverified_context
-ssl_context = ssl.create_default_context()
-ssl_context.check_hostname = False
-ssl_context.verify_mode = ssl.CERT_NONE
+
 
 
 #load_dotenv()
@@ -75,3 +71,4 @@ if __name__ == "__main__":
             
             
     
+
