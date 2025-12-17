@@ -1,74 +1,57 @@
 import os
-#from dotenv import load_dotenv
+import twitchio
 from twitchio.ext import commands
-import ssl
-import asyncio
-import aiohttp
-import ssl
-# Настройка SSL для Windows
+import logging
+from twitchio.utils import setup_logging
+from dotenv import load_dotenv
+
+load_dotenv()
+setup_logging(level=logging.INFO)
 
 
 
-
-#load_dotenv()
-
-TWITCH_TOKEN='oauth:6n6vi71dtwwcry7x981rgn158wghhv'
-TWITCH_CLIENT_ID='oyqwkklbdq1mnsunde77a5y1d8y5kt'
-TWITCH_CLIENT_SECRET='9c69fyv6jcpk6vdpxzck5hz7zzayqs'
-BOT_ID='ekl1f'
-TWITCH_BOT_NAME='Eklifbot1'
-TWITCH_CHANNEL='ekl1f'
-
-
-import aiohttp
-from aiohttp import ClientSession, TCPConnector
-
-class CustomTCPConnector(TCPConnector):
-    def __init__(self, *args, **kwargs):
-        kwargs['ssl'] = ssl_context
-        super().__init__(*args, **kwargs)
-
-# Подменяем стандартный TCPConnector
-aiohttp.TCPConnector = CustomTCPConnector
+# Все ваши параметры
+TWITCH_TOKEN = os.getenv('TWITCH_TOKEN')
+TWITCH_CLIENT_ID = 'oyqwkklbdq1mnsunde77a5y1d8y5kt'
+TWITCH_CLIENT_SECRET = os.getenv('TWITCH_CLIENT_SECRET')
+BOT_ID = '104844002'  # Ваш числовой ID
+TWITCH_CHANNEL = '104844002'
+name='EklifBot'
 
 class Bot(commands.Bot):
     def __init__(self):
+        # Передаем ВСЕ обязательные параметры
         super().__init__(
             token=TWITCH_TOKEN,
             client_id=TWITCH_CLIENT_ID,
             client_secret=TWITCH_CLIENT_SECRET,
-            bot_id=BOT_ID,
-            nick=TWITCH_BOT_NAME,
-            prefix='!',
             initial_channels=[TWITCH_CHANNEL],
+            bot_id=BOT_ID,
+            prefix="!",
+            #name=BOT_NICK,
         )
-    
-    
+        
     async def event_ready(self):
-        print (f'Бот {self.nick} успешно подключен')
-        print ('Ожидание сообщений в чате...')
+        #Called when the bot is connected to Twitch.
+        #print(f' Бот {bot.name} подключен')
+        print(f'Urer ID | {self.bot_id}')
+        await self.fetch_channel(TWITCH_CHANNEL)#.send(f'{bot.name} is online')
 
     async def event_message(self, message):
-        if message.echo:
+        #Called every time a message is sent in an observed channel.
+        if message.author.name.lower()==self.name.lower():
             return
-
-        print (f'{message.author.name}:{message.content}')
+        print(f'[{message.channel.name}] {message.author.name}: {message.content}')
         await self.handle_commands(message)
 
-    @commands.command()
-    async def hello(self, ctx):
-        await ctx.send(f'Привет, {ctx.author.name}!')
+    @commands.command(name='hello')
+    async def hello(self, ctx:commands.Context):
+        await ctx.send(f'Hello {ctx.author.name}!Я есть ТвичИО 3.1.0 бот')
 
-
-
-if __name__ == "__main__":
+if __name__== "__main__":
     bot=Bot()
     bot.run()
-    
+        
         
 
-    
-            
-            
-    
 
